@@ -73,23 +73,33 @@
 
 var _redux = __webpack_require__(8);
 
-var reducer = function reducer() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  var action = arguments[1];
+var _index = __webpack_require__(24);
 
-  switch (action.type) {
-    case "INCREMENT":
-      return state + action.payload;
-      break;
-  }
+var _index2 = _interopRequireDefault(_index);
 
-  return state;
-};
-var store = (0, _redux.createStore)(reducer);
+var _cartActions = __webpack_require__(27);
+
+var _booksActions = __webpack_require__(28);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var store = (0, _redux.createStore)(_index2.default);
 
 store.subscribe(function () {
-  console.log('current state is:' + store.getState());
+  console.log('current state is:', store.getState());
 });
+
+store.dispatch((0, _booksActions.postBooks)([{
+  id: 1,
+  title: 'very nice book',
+  description: 'cool'
+}]));
+
+store.dispatch((0, _cartActions.addToCart)([{
+  id: 1
+}]));
+
+store.dispatch((0, _booksActions.deleteBooks)({ id: 1 }));
 
 /***/ }),
 /* 1 */
@@ -1327,6 +1337,146 @@ function applyMiddleware() {
         dispatch: _dispatch
       });
     };
+  };
+}
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _redux = __webpack_require__(8);
+
+var _booksReducers = __webpack_require__(25);
+
+var _cartReducers = __webpack_require__(26);
+
+exports.default = (0, _redux.combineReducers)({
+  books: _booksReducers.booksReducers,
+  cart: _cartReducers.cartReducers
+});
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.booksReducers = booksReducers;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function booksReducers() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
+  var action = arguments[1];
+
+  switch (action.type) {
+    case "POST_BOOK":
+      return { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)) };
+      break;
+
+    case "DELETE_BOOK":
+      var currentBookToDelete = [].concat(_toConsumableArray(state.books));
+      var indexToDelete = currentBookToDelete.findIndex(function (book) {
+        return book.id === action.payload.id;
+      });
+
+      return { books: [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1))) };
+      break;
+
+    case "UPDATE_BOOK":
+
+  }
+
+  return state;
+}
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.cartReducers = cartReducers;
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function cartReducers() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { cart: [] };
+  var action = arguments[1];
+
+  switch (action.type) {
+    case 'ADD_TO_CART':
+      return { cart: [].concat(_toConsumableArray(state.cart), _toConsumableArray(action.payload)) };
+      break;
+  }
+
+  return state;
+}
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.addToCart = addToCart;
+function addToCart(book) {
+  return {
+    type: 'ADD_TO_CART',
+    payload: book
+  };
+}
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.postBooks = postBooks;
+exports.deleteBooks = deleteBooks;
+exports.updateBooks = updateBooks;
+function postBooks(book) {
+  return {
+    type: 'POST_BOOK',
+    payload: book
+  };
+}
+
+function deleteBooks(id) {
+  return {
+    type: 'DELETE_BOOK',
+    payload: id
+  };
+}
+
+function updateBooks(book) {
+  return {
+    type: 'UPDATE_BOOK',
+    payload: book
   };
 }
 
