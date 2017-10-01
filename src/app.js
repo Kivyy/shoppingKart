@@ -1,24 +1,14 @@
 'user strict'
-import {createStore} from 'redux'
+import {createStore, applyMiddleware} from 'redux'
+import logger from 'redux-logger'
 import reducers from "./reducers/index"
 import {addToCart} from './actions/cartActions'
 import {postBooks,deleteBooks,updateBooks} from './actions/booksActions'
 
-const store = createStore(reducers);
-
-store.subscribe(() => {
-  console.log('current state is:', store.getState())
-})
+const middleware = applyMiddleware(logger);
+const store = createStore(reducers,middleware);
 
 store.dispatch(postBooks([{
   id: 1,
-  title: 'very nice book',
-  description: 'cool'
+  title: 'working redux skeleton'
 }]))
-
-store.dispatch(addToCart([{
-  id: 1
-}]))
-
-
-store.dispatch(deleteBooks({id:1}))
