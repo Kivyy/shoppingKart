@@ -6,6 +6,12 @@ export function booksReducers(state = {books: [
     title: 'this is the first book title',
     description: 'testing to see if store work',
     price: 3.50
+  },
+  {
+    id: 2,
+    title: 'this is the second book',
+    description: 'not much this is seed data anyway',
+    price: 4.50
   }
 ]} , action) {
   switch(action.type){
