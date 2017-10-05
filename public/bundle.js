@@ -42535,6 +42535,14 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactBootstrap = __webpack_require__(195);
 
+var _reactRedux = __webpack_require__(66);
+
+var _redux = __webpack_require__(8);
+
+var _booksActions = __webpack_require__(28);
+
+var _reactDom = __webpack_require__(46);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -42549,10 +42557,25 @@ var BooksForm = function (_React$Component) {
   function BooksForm() {
     _classCallCheck(this, BooksForm);
 
-    return _possibleConstructorReturn(this, (BooksForm.__proto__ || Object.getPrototypeOf(BooksForm)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (BooksForm.__proto__ || Object.getPrototypeOf(BooksForm)).call(this));
+
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    return _this;
   }
 
   _createClass(BooksForm, [{
+    key: 'handleSubmit',
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      console.log(this.refs);
+      var book = [{
+        title: (0, _reactDom.findDOMNode)(this.refs.title).value,
+        description: (0, _reactDom.findDOMNode)(this.refs.description).value,
+        price: (0, _reactDom.findDOMNode)(this.refs.price).value
+      }];
+      this.props.postBooks(book);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -42567,12 +42590,43 @@ var BooksForm = function (_React$Component) {
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
               null,
-              'Title'
+              'Title:'
             ),
             _react2.default.createElement(_reactBootstrap.FormControl, {
               type: 'text',
               placeholder: 'Enter Title',
               ref: 'title' })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.FormGroup,
+            { controlId: 'description' },
+            _react2.default.createElement(
+              _reactBootstrap.ControlLabel,
+              null,
+              'Description:'
+            ),
+            _react2.default.createElement(_reactBootstrap.FormControl, {
+              type: 'text',
+              placeholder: 'Enter Description',
+              ref: 'description' })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.FormGroup,
+            { controlId: 'price' },
+            _react2.default.createElement(
+              _reactBootstrap.ControlLabel,
+              null,
+              'Price in USD:'
+            ),
+            _react2.default.createElement(_reactBootstrap.FormControl, {
+              type: 'text',
+              placeholder: 'Enter Title',
+              ref: 'price' })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Button,
+            { onClick: this.handleSubmit, bsStyle: 'primary' },
+            'Save Book '
           )
         )
       );
@@ -42582,7 +42636,11 @@ var BooksForm = function (_React$Component) {
   return BooksForm;
 }(_react2.default.Component);
 
-exports.default = BooksForm;
+function mapDispatchToProps(dispatch) {
+  return (0, _redux.bindActionCreators)({ postBooks: _booksActions.postBooks }, dispatch);
+}
+
+exports.default = (0, _reactRedux.connect)(null, mapDispatchToProps)(BooksForm);
 
 /***/ })
 /******/ ]);
