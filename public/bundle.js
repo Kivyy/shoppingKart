@@ -43823,13 +43823,11 @@ var Cart = function (_React$Component) {
     key: 'onDelete',
     value: function onDelete(_id) {
       var currentBookToDelete = this.props.cart;
-
       var indexToDelete = currentBookToDelete.findIndex(function (cart) {
         return cart._id === _id;
       });
 
       var cartAfterDelete = [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1)));
-
       this.props.deleteCartItem(cartAfterDelete);
     }
   }, {
@@ -43979,7 +43977,7 @@ var Cart = function (_React$Component) {
             _react2.default.createElement(
               'h6',
               null,
-              ' TEST'
+              ' TESTTING'
             )
           ),
           _react2.default.createElement(

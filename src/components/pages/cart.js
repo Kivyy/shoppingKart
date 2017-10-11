@@ -29,13 +29,11 @@ class Cart extends React.Component {
 
   onDelete(_id){
     const currentBookToDelete = this.props.cart
-
     const indexToDelete = currentBookToDelete.findIndex((cart) => {
       return cart._id === _id;
     })
 
     let cartAfterDelete = [...currentBookToDelete.slice(0,indexToDelete),...currentBookToDelete.slice(indexToDelete + 1)]
-
     this.props.deleteCartItem(cartAfterDelete);
   }
 
@@ -55,8 +53,6 @@ class Cart extends React.Component {
       return this.renderEmpty();
     }
   }
-
-
 
   renderEmpty(){
     return(<div></div>)
@@ -102,7 +98,7 @@ class Cart extends React.Component {
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
             <Modal.Body>
-              <h6> TEST</h6>
+              <h6> TESTTING</h6>
             </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.close}>Close</Button>
