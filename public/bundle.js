@@ -32325,45 +32325,62 @@ function booksReducers() {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 exports.cartReducers = cartReducers;
+exports.totals = totals;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function cartReducers() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { cart: [] };
-    var action = arguments[1];
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { cart: [] };
+  var action = arguments[1];
 
-    switch (action.type) {
-        case 'ADD_TO_CART':
-            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
-            break;
+  switch (action.type) {
+    case 'ADD_TO_CART':
+      return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)), totalAmount: totals(action.payload).amount, totalQty: totals(action.payload).qty };
+      break;
 
-        case 'UPDATE_CART':
-            var currentCartToUpdate = [].concat(_toConsumableArray(state.cart));
+    case 'UPDATE_CART':
+      var currentCartToUpdate = [].concat(_toConsumableArray(state.cart));
 
-            var indexToUpdate = currentCartToUpdate.findIndex(function (cart) {
-                return cart._id === action._id;
-            });
+      var indexToUpdate = currentCartToUpdate.findIndex(function (cart) {
+        return cart._id === action._id;
+      });
 
-            var newCartToUpdate = _extends({}, currentCartToUpdate[indexToUpdate], { quantity: currentCartToUpdate[indexToUpdate].quantity + action.unit
-            });
+      var newCartToUpdate = _extends({}, currentCartToUpdate[indexToUpdate], { quantity: currentCartToUpdate[indexToUpdate].quantity + action.unit
+      });
 
-            var cartUpdate = [].concat(_toConsumableArray(currentCartToUpdate.slice(0, indexToUpdate)), [newCartToUpdate], _toConsumableArray(currentCartToUpdate.slice(indexToUpdate + 1)));
-            return _extends({}, state, { cart: cartUpdate });
-            break;
+      var cartUpdate = [].concat(_toConsumableArray(currentCartToUpdate.slice(0, indexToUpdate)), [newCartToUpdate], _toConsumableArray(currentCartToUpdate.slice(indexToUpdate + 1)));
+      return _extends({}, state, { cart: cartUpdate, totalAmount: totals(cartUpdate).amount, totalQty: totals(cartUpdate).qty });
+      break;
 
-        case 'DELETE_CART_ITEM':
-            return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)) };
-            break;
+    case 'DELETE_CART_ITEM':
+      return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)), totalAmount: totals(action.payload).amount, totalQty: totals(action.payload).qty };
+      break;
 
-    }
+  }
 
-    return state;
+  return state;
+}
+
+function totals(payloadArr) {
+  var totalAmount = payloadArr.map(function (cartArr) {
+    return cartArr.price * cartArr.quantity;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0);
+
+  var totalQty = payloadArr.map(function (qty) {
+    return qty.quantity;
+  }).reduce(function (a, b) {
+    return a + b;
+  }, 0);
+
+  return { amount: totalAmount.toFixed(2), qty: totalQty };
 }
 
 /***/ }),
@@ -43950,7 +43967,8 @@ var Cart = function (_React$Component) {
             _react2.default.createElement(
               'h6',
               null,
-              ' Total amount: '
+              ' Total amount: ',
+              this.props.totalAmount
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
@@ -43977,12 +43995,27 @@ var Cart = function (_React$Component) {
             _react2.default.createElement(
               'h6',
               null,
-              ' TESTTING'
+              ' Thank you'
+            ),
+            _react2.default.createElement(
+              'p',
+              null,
+              ' You will receive an email confirmation '
             )
           ),
           _react2.default.createElement(
             _reactBootstrap.Modal.Footer,
             null,
+            _react2.default.createElement(
+              _reactBootstrap.Col,
+              { xs: 6 },
+              _react2.default.createElement(
+                'h6',
+                null,
+                ' Total $: ',
+                this.props.totalAmount
+              )
+            ),
             _react2.default.createElement(
               _reactBootstrap.Button,
               { onClick: this.close },
@@ -43999,7 +44032,8 @@ var Cart = function (_React$Component) {
 
 function mapStateToProps(state) {
   return {
-    cart: state.cart.cart
+    cart: state.cart.cart,
+    totalAmount: state.cart.totalAmount
   };
 }
 
