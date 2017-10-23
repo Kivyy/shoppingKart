@@ -48879,7 +48879,6 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(Main);
 
 "use strict";
 
-' use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
