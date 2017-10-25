@@ -18,7 +18,28 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/*', function(req, res){
+// APIs
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/bookshop')
+
+var Books = require('./models/books');
+
+// ---> POST BOOKS <----
+app.post('/books' , (req,res) => {
+  console.log(req.body)
+  var book = req.body;
+
+  Books.create(book, (err,returnBook) =>{
+    if(err){
+      throw err;
+    }
+    res.json(returnBook)
+  })
+});
+
+// END APIs
+
+app.get('*', function(req, res){
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
