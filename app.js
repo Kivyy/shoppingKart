@@ -24,7 +24,6 @@ mongoose.connect('mongodb://localhost:27017/bookshop')
 
 var Books = require('./models/books');
 
-// ---> POST BOOKS <----
 app.post('/books' , (req,res) => {
   console.log(req.body)
   var book = req.body;
@@ -37,7 +36,17 @@ app.post('/books' , (req,res) => {
   })
 });
 
-// END APIs
+app.get('/books', (req,res) => {
+  Books.find((err,books) => {
+    if(err){
+      throw err
+    }
+
+    res.json(books)
+  })
+})
+
+
 
 app.get('*', function(req, res){
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
