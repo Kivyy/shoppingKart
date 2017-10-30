@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 import {Router, Route, IndexRoute,browserHistory} from 'react-router';
 import {createStore, applyMiddleware} from 'redux';
 import logger from 'redux-logger';
+import thunk from 'redux-thunk'
 import reducers from "./reducers/index";
 import {addToCart} from './actions/cartActions';
 import {postBooks,deleteBooks,updateBooks} from './actions/booksActions';
@@ -14,7 +15,7 @@ import BooksForm from './components/pages/booksForm';
 import Main from './main';
 
 
-const middleware = applyMiddleware(logger);
+const middleware = applyMiddleware(logger,thunk);
 const store = createStore(reducers,middleware);
 
 
