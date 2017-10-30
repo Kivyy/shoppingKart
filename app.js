@@ -46,7 +46,16 @@ app.get('/books', (req,res) => {
   })
 })
 
+app.delete('/books/:_id', (req,res) => {
+  let query = {_id: req.params._id};
 
+  Books.remove(query,(err,result) => {
+    if(err){
+      throw err
+    }
+    res.json(result)
+  })
+})
 
 app.get('*', function(req, res){
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
