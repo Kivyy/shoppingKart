@@ -57,6 +57,31 @@ app.delete('/books/:_id', (req,res) => {
   })
 })
 
+app.put('/books/:_id', (req,res) => {
+  let book = req.body;
+  let query = req.params._id;
+
+  let update = {
+    '$set': {
+      title: book.title,
+      description: book.description,
+      image: book.image,
+      price: book.price
+    }
+  }
+
+  let options = {new: true};
+
+  Books.findOneAndUpdate(query,update,options, (err , books) => {
+    if(err){
+      throw err
+    }
+
+    res.json(books)
+  })
+})
+
+
 app.get('*', function(req, res){
   res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
