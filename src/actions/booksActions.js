@@ -8,7 +8,6 @@ export function getBooks(){
 }
 
 export function postBooks(book){
-
 //change return method to return a function+dispatch , will be using redux-thunk middleware in main client file
   return function(dispatch){
     axios.post('/books', book)
