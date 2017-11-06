@@ -2,8 +2,15 @@
 import axios from 'axios';
 
 export function getBooks(){
-  return {
-    type: 'GET_BOOKS'
+  return function(dispatch){
+    axios.get('/books')
+      .then((response) => {
+        console.log(response.data);
+        dispatch({type: 'GET_BOOKS' , payload: response.data})
+      })
+      .catch((err) => {
+        dispatch({type: 'GET_BOOKS_REJECTED', payload: 'there was an error getting all the books'})
+      })
   }
 }
 
@@ -20,10 +27,16 @@ export function postBooks(book){
   }
 }
 
-export function deleteBooks(_id){
-  return {
-    type: 'DELETE_BOOK',
-    payload: _id
+export function deleteBooks(id){
+  console.log(id);
+  return function(dispatch){
+    axios.delete(`/books/${id}`)
+      .then((response) => {
+        dispatch({type: 'DELETE_BOOK', payload: id})
+      })
+      .catch((err) => {
+        dispatch({type: 'DELETE_BOOK_REJECTED', payload: 'there was an error deleting the book.'})
+      })
   }
 }
 
