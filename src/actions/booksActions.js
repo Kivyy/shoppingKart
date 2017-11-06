@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export function getBooks(){
   return function(dispatch){
-    axios.get('/books')
+    axios.get('/api/books')
       .then((response) => {
         console.log(response.data);
         dispatch({type: 'GET_BOOKS' , payload: response.data})
@@ -17,7 +17,7 @@ export function getBooks(){
 export function postBooks(book){
 //change return method to return a function+dispatch , will be using redux-thunk middleware in main client file
   return function(dispatch){
-    axios.post('/books', book)
+    axios.post('/api/books', book)
       .then((response) => {
         dispatch({type:"POST_BOOK", payload: response.data})
       })
@@ -30,7 +30,7 @@ export function postBooks(book){
 export function deleteBooks(id){
   console.log(id);
   return function(dispatch){
-    axios.delete(`/books/${id}`)
+    axios.delete(`/api/books/${id}`)
       .then((response) => {
         dispatch({type: 'DELETE_BOOK', payload: id})
       })

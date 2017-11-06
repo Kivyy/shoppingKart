@@ -5484,7 +5484,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function getBooks() {
   return function (dispatch) {
-    _axios2.default.get('/books').then(function (response) {
+    _axios2.default.get('/api/books').then(function (response) {
       console.log(response.data);
       dispatch({ type: 'GET_BOOKS', payload: response.data });
     }).catch(function (err) {
@@ -5496,7 +5496,7 @@ function getBooks() {
 function postBooks(book) {
   //change return method to return a function+dispatch , will be using redux-thunk middleware in main client file
   return function (dispatch) {
-    _axios2.default.post('/books', book).then(function (response) {
+    _axios2.default.post('/api/books', book).then(function (response) {
       dispatch({ type: "POST_BOOK", payload: response.data });
     }).catch(function (err) {
       dispatch({ type: "POST_BOOK_REJECTED", payload: "there was an error. " });
@@ -5507,7 +5507,7 @@ function postBooks(book) {
 function deleteBooks(id) {
   console.log(id);
   return function (dispatch) {
-    _axios2.default.delete('/books/' + id).then(function (response) {
+    _axios2.default.delete('/api/books/' + id).then(function (response) {
       dispatch({ type: 'DELETE_BOOK', payload: id });
     }).catch(function (err) {
       dispatch({ type: 'DELETE_BOOK_REJECTED', payload: 'there was an error deleting the book.' });
