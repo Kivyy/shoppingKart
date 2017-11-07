@@ -5436,28 +5436,70 @@ var go = exports.go = function go(n) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports.getCart = getCart;
 exports.addToCart = addToCart;
 exports.deleteCartItem = deleteCartItem;
 exports.updateCart = updateCart;
-function addToCart(book) {
-  return {
-    type: 'ADD_TO_CART',
-    payload: book
+
+var _axios = __webpack_require__(261);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function getCart() {
+  return function (dispatch) {
+    _axios2.default.get('/api/cart').then(function (response) {
+      return [dispatch({ type: 'GET_CART', payload: response.data })];
+    }).catch(function (err) {
+      dispatch({ type: 'GET_CART_REJECTED', payload: 'error cannot get cart from database' });
+    });
+  };
+}
+
+function addToCart(cart) {
+  return function (dispatch) {
+    _axios2.default.post('/api/cart', cart).then(function (response) {
+      dispatch({ type: 'ADD_TO_CART', payload: response.data });
+    }).catch(function (err) {
+      dispatch({ type: 'ADD_TO_CART_REJECTION', payload: 'error cant add to mongod' });
+    });
   };
 }
 
 function deleteCartItem(cart) {
-  return {
-    type: 'DELETE_CART_ITEM',
-    payload: cart
+  return function (dispatch) {
+    _axios2.default.post('/api/cart', cart).then(function (response) {
+      dispatch({ type: 'DELETE_CART_ITEM', payload: response.data });
+    }).catch(function (err) {
+      dispatch({ type: 'DELETE_REJECTION', payload: 'error cant add to mongod' });
+    });
   };
 }
 
-function updateCart(_id, unit) {
-  return {
-    type: 'UPDATE_CART',
-    _id: _id,
-    unit: unit
+function updateCart(_id, unit, cart) {
+  var currentCartToUpdate = cart;
+
+  var indexToUpdate = currentCartToUpdate.findIndex(function (cart) {
+    return cart._id === _id;
+  });
+
+  var newCartToUpdate = _extends({}, currentCartToUpdate[indexToUpdate], { quantity: currentCartToUpdate[indexToUpdate].quantity + unit
+  });
+
+  var cartUpdate = [].concat(_toConsumableArray(currentCartToUpdate.slice(0, indexToUpdate)), [newCartToUpdate], _toConsumableArray(currentCartToUpdate.slice(indexToUpdate + 1)));
+
+  return function (dispatch) {
+    _axios2.default.post('/api/cart', cartUpdate).then(function (response) {
+      dispatch({ type: 'UPDATE_CART', payload: response.data });
+    }).catch(function (err) {
+      dispatch({ type: 'UPDATE_CART_REJECTION', payload: 'error cant add to mongod' });
+    });
   };
 }
 
@@ -13103,6 +13145,11 @@ var Cart = function (_React$Component) {
   }
 
   _createClass(Cart, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.props.getCart();
+    }
+  }, {
     key: 'open',
     value: function open() {
       this.setState({ showModal: true });
@@ -13126,13 +13173,13 @@ var Cart = function (_React$Component) {
   }, {
     key: 'onIncrement',
     value: function onIncrement(_id) {
-      this.props.updateCart(_id, 1);
+      this.props.updateCart(_id, 1, this.props.cart);
     }
   }, {
     key: 'onDecrement',
     value: function onDecrement(_id, quantity) {
       if (quantity > 1) {
-        this.props.updateCart(_id, -1);
+        this.props.updateCart(_id, -1, this.props.cart);
       }
     }
   }, {
@@ -13314,7 +13361,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return (0, _redux.bindActionCreators)({ deleteCartItem: _cartActions.deleteCartItem, updateCart: _cartActions.updateCart }, dispatch);
+  return (0, _redux.bindActionCreators)({ deleteCartItem: _cartActions.deleteCartItem, updateCart: _cartActions.updateCart, getCart: _cartActions.getCart }, dispatch);
 }
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Cart);
@@ -38233,22 +38280,16 @@ function cartReducers() {
   var action = arguments[1];
 
   switch (action.type) {
+    case 'GET_CART':
+      return _extends({}, state, { cart: action.payload, totalAmount: totals(action.payload).amount, totalQty: totals(action.payload).qty });
+      break;
+
     case 'ADD_TO_CART':
       return { cart: [].concat(_toConsumableArray(state), _toConsumableArray(action.payload)), totalAmount: totals(action.payload).amount, totalQty: totals(action.payload).qty };
       break;
 
     case 'UPDATE_CART':
-      var currentCartToUpdate = [].concat(_toConsumableArray(state.cart));
-
-      var indexToUpdate = currentCartToUpdate.findIndex(function (cart) {
-        return cart._id === action._id;
-      });
-
-      var newCartToUpdate = _extends({}, currentCartToUpdate[indexToUpdate], { quantity: currentCartToUpdate[indexToUpdate].quantity + action.unit
-      });
-
-      var cartUpdate = [].concat(_toConsumableArray(currentCartToUpdate.slice(0, indexToUpdate)), [newCartToUpdate], _toConsumableArray(currentCartToUpdate.slice(indexToUpdate + 1)));
-      return _extends({}, state, { cart: cartUpdate, totalAmount: totals(cartUpdate).amount, totalQty: totals(cartUpdate).qty });
+      return _extends({}, state, { cart: action.payload, totalAmount: totals(action.payload).amount, totalQty: totals(action.payload).qty });
       break;
 
     case 'DELETE_CART_ITEM':
@@ -50602,7 +50643,7 @@ var BookItem = function (_React$Component) {
         if (cartIndex === -1) {
           this.props.addToCart(book);
         } else {
-          this.props.updateCart(_id, 1);
+          this.props.updateCart(_id, 1, this.props.cart);
         }
       } else {
         this.props.addToCart(book);

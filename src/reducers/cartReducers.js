@@ -2,27 +2,20 @@
 
 export function cartReducers(state = {cart: []}, action){
   switch(action.type){
+    case('GET_CART'):
+      return{...state, cart: action.payload, totalAmount: totals(action.payload).amount , totalQty: totals(action.payload).qty}
+    break
+
     case('ADD_TO_CART'):
-    return {cart: [...state,...action.payload,] , totalAmount: totals(action.payload).amount , totalQty: totals(action.payload).qty}
+      return {cart: [...state,...action.payload,] , totalAmount: totals(action.payload).amount , totalQty: totals(action.payload).qty}
     break
 
     case('UPDATE_CART'):
-    const currentCartToUpdate = [...state.cart]
-
-    const indexToUpdate = currentCartToUpdate.findIndex((cart)=>{
-      return cart._id === action._id;
-    })
-
-    const newCartToUpdate = {
-      ...currentCartToUpdate[indexToUpdate], quantity: currentCartToUpdate[indexToUpdate].quantity + action.unit
-    }
-
-    let cartUpdate =  [...currentCartToUpdate.slice(0,indexToUpdate), newCartToUpdate, ...currentCartToUpdate.slice(indexToUpdate + 1 )]
-    return {...state,cart: cartUpdate, totalAmount: totals(cartUpdate).amount,totalQty: totals(cartUpdate).qty}
+      return {...state,cart: action.payload, totalAmount: totals(action.payload).amount,totalQty: totals(action.payload).qty}
     break
 
     case('DELETE_CART_ITEM'):
-    return {cart: [...state,...action.payload],totalAmount: totals(action.payload).amount,totalQty: totals(action.payload).qty}
+      return {cart: [...state,...action.payload],totalAmount: totals(action.payload).amount,totalQty: totals(action.payload).qty}
     break
 
 
