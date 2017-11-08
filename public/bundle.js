@@ -5517,6 +5517,7 @@ exports.getBooks = getBooks;
 exports.postBooks = postBooks;
 exports.deleteBooks = deleteBooks;
 exports.updateBooks = updateBooks;
+exports.resetButton = resetButton;
 
 var _axios = __webpack_require__(261);
 
@@ -5561,6 +5562,12 @@ function updateBooks(book) {
   return {
     type: 'UPDATE_BOOK',
     payload: book
+  };
+}
+
+function resetButton() {
+  return {
+    type: 'RESET_BUTTON'
   };
 }
 
@@ -12938,6 +12945,10 @@ var _booksActions = __webpack_require__(87);
 
 var _reactDom = __webpack_require__(14);
 
+var _axios = __webpack_require__(261);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12954,12 +12965,29 @@ var BooksForm = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (BooksForm.__proto__ || Object.getPrototypeOf(BooksForm)).call(this));
 
+    _this.state = {
+      images: [{}],
+      img: ''
+    };
     _this.handleSubmit = _this.handleSubmit.bind(_this);
     _this.onDelete = _this.onDelete.bind(_this);
+    _this.resetForm = _this.resetForm.bind(_this);
     return _this;
   }
 
   _createClass(BooksForm, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      this.props.getBooks();
+      _axios2.default.get('/api/images').then(function (response) {
+        _this2.setState({ images: response.data });
+      }).catch(function (err) {
+        _this2.setState({ images: 'error loading images', imag: '' });
+      });
+    }
+  }, {
     key: 'handleSubmit',
     value: function handleSubmit(e) {
       e.preventDefault();
@@ -12967,6 +12995,7 @@ var BooksForm = function (_React$Component) {
       var book = [{
         title: (0, _reactDom.findDOMNode)(this.refs.title).value,
         description: (0, _reactDom.findDOMNode)(this.refs.description).value,
+        images: (0, _reactDom.findDOMNode)(this.refs.image).value,
         price: (0, _reactDom.findDOMNode)(this.refs.price).value
       }];
       this.props.postBooks(book);
@@ -12979,8 +13008,22 @@ var BooksForm = function (_React$Component) {
       this.props.deleteBooks(bookId);
     }
   }, {
+    key: 'handleSelect',
+    value: function handleSelect(img) {
+      this.setState({
+        img: '/images/' + img
+      });
+    }
+  }, {
+    key: 'resetForm',
+    value: function resetForm() {
+      this.props.resetButton();
+      (0, _reactDom.findDOMNode)(this.refs.title).value = '', (0, _reactDom.findDOMNode)(this.refs.description).value = '', (0, _reactDom.findDOMNode)(this.refs.price).value = '', this.setState({ img: '' });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      var _this3 = this;
 
       var booksList = this.props.books.map(function (booksArr) {
         return _react2.default.createElement(
@@ -12991,83 +13034,121 @@ var BooksForm = function (_React$Component) {
         );
       });
 
+      var imgList = this.state.images.map(function (imgArr, i) {
+        return _react2.default.createElement(
+          _reactBootstrap.MenuItem,
+          { key: i, eventKey: imgArr.name, onClick: _this3.handleSelect.bind(_this3, imgArr.name) },
+          imgArr.name
+        );
+      });
+
       return _react2.default.createElement(
         _reactBootstrap.Well,
         null,
         _react2.default.createElement(
-          _reactBootstrap.Panel,
+          _reactBootstrap.Row,
           null,
           _react2.default.createElement(
-            _reactBootstrap.FormGroup,
-            { controlId: 'title' },
+            _reactBootstrap.Col,
+            { xs: 12, sm: 6 },
             _react2.default.createElement(
-              _reactBootstrap.ControlLabel,
+              _reactBootstrap.Panel,
               null,
-              'Title:'
-            ),
-            _react2.default.createElement(_reactBootstrap.FormControl, {
-              type: 'text',
-              placeholder: 'Enter Title',
-              ref: 'title' })
-          ),
-          _react2.default.createElement(
-            _reactBootstrap.FormGroup,
-            { controlId: 'description' },
-            _react2.default.createElement(
-              _reactBootstrap.ControlLabel,
-              null,
-              'Description:'
-            ),
-            _react2.default.createElement(_reactBootstrap.FormControl, {
-              type: 'text',
-              placeholder: 'Enter Description',
-              ref: 'description' })
-          ),
-          _react2.default.createElement(
-            _reactBootstrap.FormGroup,
-            { controlId: 'price' },
-            _react2.default.createElement(
-              _reactBootstrap.ControlLabel,
-              null,
-              'Price in USD:'
-            ),
-            _react2.default.createElement(_reactBootstrap.FormControl, {
-              type: 'text',
-              placeholder: 'Enter Title',
-              ref: 'price' })
-          ),
-          _react2.default.createElement(
-            _reactBootstrap.Button,
-            { onClick: this.handleSubmit, bsStyle: 'primary' },
-            'Save Book '
-          )
-        ),
-        _react2.default.createElement(
-          _reactBootstrap.Panel,
-          { style: { marginTop: '25px' } },
-          _react2.default.createElement(
-            _reactBootstrap.FormGroup,
-            { controlId: 'formControlsSelect' },
-            _react2.default.createElement(
-              _reactBootstrap.ControlLabel,
-              null,
-              'Select a book id to delete'
-            ),
-            _react2.default.createElement(
-              _reactBootstrap.FormControl,
-              { ref: 'delete', componentClass: 'select', placeholder: 'select' },
               _react2.default.createElement(
-                'option',
-                { value: 'select' },
-                'select'
+                _reactBootstrap.InputGroup,
+                null,
+                _react2.default.createElement(_reactBootstrap.FormControl, { type: 'text', ref: 'image', value: this.state.img }),
+                _react2.default.createElement(
+                  _reactBootstrap.DropdownButton,
+                  {
+                    componentClass: _reactBootstrap.InputGroup.Button,
+                    id: 'input-dropdown-addon',
+                    title: 'Select an image', bsStyle: 'primary' },
+                  imgList
+                )
               ),
-              booksList
+              _react2.default.createElement(_reactBootstrap.Image, { src: this.state.img, responsive: true })
             )
           ),
           _react2.default.createElement(
-            _reactBootstrap.Button,
-            { onClick: this.onDelete, bsStyle: 'danger' },
-            ' Delete book'
+            _reactBootstrap.Col,
+            { xs: 12, sm: 6 },
+            _react2.default.createElement(
+              _reactBootstrap.Panel,
+              null,
+              _react2.default.createElement(
+                _reactBootstrap.FormGroup,
+                { controlId: 'title' },
+                _react2.default.createElement(
+                  _reactBootstrap.ControlLabel,
+                  null,
+                  'Title:'
+                ),
+                _react2.default.createElement(_reactBootstrap.FormControl, {
+                  type: 'text',
+                  placeholder: 'Enter Title',
+                  ref: 'title' })
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.FormGroup,
+                { controlId: 'description' },
+                _react2.default.createElement(
+                  _reactBootstrap.ControlLabel,
+                  null,
+                  'Description:'
+                ),
+                _react2.default.createElement(_reactBootstrap.FormControl, {
+                  type: 'text',
+                  placeholder: 'Enter Description',
+                  ref: 'description' })
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.FormGroup,
+                { controlId: 'price' },
+                _react2.default.createElement(
+                  _reactBootstrap.ControlLabel,
+                  null,
+                  'Price in USD:'
+                ),
+                _react2.default.createElement(_reactBootstrap.FormControl, {
+                  type: 'text',
+                  placeholder: 'Enter Title',
+                  ref: 'price' })
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.Button,
+                { onClick: !this.props.msg ? this.handleSubmit : this.resetForm, bsStyle: !this.props.style ? 'primary' : this.props.style },
+                !this.props.msg ? 'Save book' : this.props.msg
+              )
+            ),
+            _react2.default.createElement(
+              _reactBootstrap.Panel,
+              { style: { marginTop: '25px' } },
+              _react2.default.createElement(
+                _reactBootstrap.FormGroup,
+                { controlId: 'formControlsSelect' },
+                _react2.default.createElement(
+                  _reactBootstrap.ControlLabel,
+                  null,
+                  'Select a book id to delete'
+                ),
+                _react2.default.createElement(
+                  _reactBootstrap.FormControl,
+                  { ref: 'delete', componentClass: 'select', placeholder: 'select' },
+                  _react2.default.createElement(
+                    'option',
+                    { value: 'select' },
+                    'select'
+                  ),
+                  booksList
+                )
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.Button,
+                { onClick: this.onDelete, bsStyle: 'danger' },
+                ' Delete book'
+              )
+            )
           )
         )
       );
@@ -13079,12 +13160,14 @@ var BooksForm = function (_React$Component) {
 
 function mapStateToProps(state) {
   return {
-    books: state.books.books
+    books: state.books.books,
+    msg: state.books.msg,
+    style: state.books.style
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return (0, _redux.bindActionCreators)({ postBooks: _booksActions.postBooks, deleteBooks: _booksActions.deleteBooks }, dispatch);
+  return (0, _redux.bindActionCreators)({ postBooks: _booksActions.postBooks, deleteBooks: _booksActions.deleteBooks, getBooks: _booksActions.getBooks, resetButton: _booksActions.resetButton }, dispatch);
 }
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(BooksForm);
@@ -38208,7 +38291,7 @@ exports.default = (0, _redux.combineReducers)({
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -38218,43 +38301,51 @@ exports.booksReducers = booksReducers;
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function booksReducers() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
-  var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { books: [] };
+    var action = arguments[1];
 
-  switch (action.type) {
-    case 'GET_BOOKS':
-      return _extends({}, state, { books: [].concat(_toConsumableArray(action.payload)) });
-      break;
+    switch (action.type) {
+        case 'GET_BOOKS':
+            return _extends({}, state, { books: [].concat(_toConsumableArray(action.payload)) });
+            break;
 
-    case "POST_BOOK":
-      return { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)) };
-      break;
+        case "POST_BOOK":
+            return _extends({}, state, { books: [].concat(_toConsumableArray(state.books), _toConsumableArray(action.payload)), msg: 'Saved! Click to continue', style: 'success' });
+            break;
 
-    case "DELETE_BOOK":
-      var currentBookToDelete = [].concat(_toConsumableArray(state.books));
-      console.log(action.payload);
-      var indexToDelete = currentBookToDelete.findIndex(function (book) {
-        return book._id === action.payload;
-      });
+        case "POST_BOOK_REJECTED":
+            return _extends({}, state, { msg: 'Please, try again', style: 'danger' });
+            break;
 
-      return { books: [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1))) };
-      break;
+        case "RESET_BUTTON":
+            return _extends({}, state, { msg: null, style: 'primary' });
+            break;
 
-    case "UPDATE_BOOK":
-      var currentBookToUpdate = [].concat(_toConsumableArray(state.books));
-      var indexToUpdate = currentBookToUpdate.findIndex(function (book) {
-        return book._id === action.payload._id;
-      });
+        case "DELETE_BOOK":
+            var currentBookToDelete = [].concat(_toConsumableArray(state.books));
+            console.log(action.payload);
+            var indexToDelete = currentBookToDelete.findIndex(function (book) {
+                return book._id === action.payload;
+            });
 
-      var newBookToUpdate = _extends({}, currentBookToUpdate[indexToUpdate], {
-        title: action.payload.title
-      });
+            return { books: [].concat(_toConsumableArray(currentBookToDelete.slice(0, indexToDelete)), _toConsumableArray(currentBookToDelete.slice(indexToDelete + 1))) };
+            break;
 
-      return { books: [].concat(_toConsumableArray(currentBookToUpdate.slice(0, indexToUpdate)), [newBookToUpdate], _toConsumableArray(currentBookToUpdate.slice(indexToUpdate + 1))) };
-      break;
-  }
+        case "UPDATE_BOOK":
+            var currentBookToUpdate = [].concat(_toConsumableArray(state.books));
+            var indexToUpdate = currentBookToUpdate.findIndex(function (book) {
+                return book._id === action.payload._id;
+            });
 
-  return state;
+            var newBookToUpdate = _extends({}, currentBookToUpdate[indexToUpdate], {
+                title: action.payload.title
+            });
+
+            return { books: [].concat(_toConsumableArray(currentBookToUpdate.slice(0, indexToUpdate)), [newBookToUpdate], _toConsumableArray(currentBookToUpdate.slice(indexToUpdate + 1))) };
+            break;
+    }
+
+    return state;
 }
 
 /***/ }),
@@ -39273,7 +39364,7 @@ var BooksList = function (_React$Component) {
         return _react2.default.createElement(
           _reactBootstrap.Col,
           { xs: 12, sm: 6, md: 4, key: book._id },
-          _react2.default.createElement(_bookItem2.default, { _id: book._id, title: book.title, description: book.description, price: book.price })
+          _react2.default.createElement(_bookItem2.default, { _id: book._id, title: book.title, description: book.description, images: book.images, price: book.price })
         );
       });
 
@@ -39288,11 +39379,6 @@ var BooksList = function (_React$Component) {
         _react2.default.createElement(
           _reactBootstrap.Row,
           { style: { marginTop: '15px' } },
-          _react2.default.createElement(
-            _reactBootstrap.Col,
-            { xs: 12, sm: 6 },
-            _react2.default.createElement(_booksForm2.default, null)
-          ),
           booksList
         )
       );
@@ -50629,6 +50715,7 @@ var BookItem = function (_React$Component) {
         _id: this.props._id,
         title: this.props.title,
         description: this.props.description,
+        images: this.props.images,
         price: this.props.price,
         quantity: 1
       }]);
@@ -50660,7 +50747,12 @@ var BookItem = function (_React$Component) {
           null,
           _react2.default.createElement(
             _reactBootstrap.Col,
-            { xs: 12 },
+            { xs: 12, sm: 4 },
+            _react2.default.createElement(_reactBootstrap.Image, { src: this.props.images, responsive: true })
+          ),
+          _react2.default.createElement(
+            _reactBootstrap.Col,
+            { xs: 12, sm: 8 },
             _react2.default.createElement(
               'h6',
               null,
