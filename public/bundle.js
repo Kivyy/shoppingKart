@@ -39374,6 +39374,52 @@ var BooksList = function (_React$Component) {
         _react2.default.createElement(
           _reactBootstrap.Row,
           null,
+          _react2.default.createElement(
+            _reactBootstrap.Carousel,
+            null,
+            _react2.default.createElement(
+              _reactBootstrap.Carousel.Item,
+              null,
+              _react2.default.createElement('img', { width: 900, height: 300, alt: '900x300', src: '/images/HP1.jpg' }),
+              _react2.default.createElement(
+                _reactBootstrap.Carousel.Caption,
+                null,
+                _react2.default.createElement(
+                  'h3',
+                  null,
+                  'First slide label'
+                ),
+                _react2.default.createElement(
+                  'p',
+                  null,
+                  'Nulla vitae elit libero, a pharetra augue mollis interdum.'
+                )
+              )
+            ),
+            _react2.default.createElement(
+              _reactBootstrap.Carousel.Item,
+              null,
+              _react2.default.createElement('img', { width: 900, height: 300, alt: '900x300', src: '/images/hp3.jpg' }),
+              _react2.default.createElement(
+                _reactBootstrap.Carousel.Caption,
+                null,
+                _react2.default.createElement(
+                  'h3',
+                  null,
+                  'Second slide label'
+                ),
+                _react2.default.createElement(
+                  'p',
+                  null,
+                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                )
+              )
+            )
+          )
+        ),
+        _react2.default.createElement(
+          _reactBootstrap.Row,
+          null,
           _react2.default.createElement(_cart2.default, null)
         ),
         _react2.default.createElement(
@@ -50703,12 +50749,20 @@ var BookItem = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (BookItem.__proto__ || Object.getPrototypeOf(BookItem)).call(this));
 
+    _this.state = {
+      isClick: false
+    };
     _this.handleCart = _this.handleCart.bind(_this);
-
+    _this.onReadMore = _this.onReadMore.bind(_this);
     return _this;
   }
 
   _createClass(BookItem, [{
+    key: 'onReadMore',
+    value: function onReadMore() {
+      this.setState({ isClick: true });
+    }
+  }, {
     key: 'handleCart',
     value: function handleCart() {
       var book = [].concat(_toConsumableArray(this.props.cart), [{
@@ -50761,7 +50815,12 @@ var BookItem = function (_React$Component) {
             _react2.default.createElement(
               'p',
               null,
-              this.props.description
+              this.props.description.length > 50 && this.state.isClicked === false ? this.props.description.substring(0, 50) : this.props.description,
+              _react2.default.createElement(
+                'button',
+                { className: 'link', onClick: this.onReadMore },
+                this.state.isClicked === false && this.props.description !== null && this.props.description.length > 50 ? '...read more' : ''
+              )
             ),
             _react2.default.createElement(
               'h6',
@@ -50823,6 +50882,10 @@ var _footer2 = _interopRequireDefault(_footer);
 
 var _reactRedux = __webpack_require__(34);
 
+var _redux = __webpack_require__(30);
+
+var _cartActions = __webpack_require__(86);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -50841,6 +50904,11 @@ var Main = function (_React$Component) {
   }
 
   _createClass(Main, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.props.getCart();
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -50862,7 +50930,11 @@ function mapStateToProps(state) {
   };
 }
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(Main);
+function mapDispatchToProps(dispatch) {
+  return (0, _redux.bindActionCreators)({ getCart: _cartActions.getCart }, dispatch);
+}
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Main);
 
 /***/ }),
 /* 422 */
