@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 
 var httpProxy = require('http-proxy');
+
 // REQUEST HANDLER
 var requestHandler = require('./requestHandler.js')
 
@@ -30,7 +31,6 @@ app.set('view engine', 'ejs');
 
 app.use(requestHandler);
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
