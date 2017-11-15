@@ -13639,43 +13639,28 @@ var _index2 = _interopRequireDefault(_index);
 
 var _cartActions = __webpack_require__(59);
 
-var _booksActions = __webpack_require__(89);
+var _routes = __webpack_require__(426);
 
-var _booksList = __webpack_require__(280);
-
-var _booksList2 = _interopRequireDefault(_booksList);
-
-var _cart = __webpack_require__(188);
-
-var _cart2 = _interopRequireDefault(_cart);
-
-var _booksForm = __webpack_require__(187);
-
-var _booksForm2 = _interopRequireDefault(_booksForm);
-
-var _main = __webpack_require__(421);
-
-var _main2 = _interopRequireDefault(_main);
+var _routes2 = _interopRequireDefault(_routes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//redux action
+
+//React-router
 var middleware = (0, _redux.applyMiddleware)(_reduxLogger2.default, _reduxThunk2.default);
-var store = (0, _redux.createStore)(_index2.default, middleware);
+//initial state
+
+//
+
+//combine reducer
+var initialState = window.INITIAL_STATE;
+var store = (0, _redux.createStore)(_index2.default, initialState, middleware);
 
 (0, _reactDom.render)(_react2.default.createElement(
   _reactRedux.Provider,
   { store: store },
-  _react2.default.createElement(
-    _reactRouter.Router,
-    { history: _reactRouter.browserHistory },
-    _react2.default.createElement(
-      _reactRouter.Route,
-      { path: '/', component: _main2.default },
-      _react2.default.createElement(_reactRouter.IndexRoute, { component: _booksList2.default }),
-      _react2.default.createElement(_reactRouter.Route, { path: '/admin', component: _booksForm2.default }),
-      _react2.default.createElement(_reactRouter.Route, { path: '/cart', component: _cart2.default })
-    )
-  )
+  _routes2.default
 ), document.getElementById('app'));
 
 /***/ }),
@@ -51190,6 +51175,58 @@ var Footer = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Footer;
+
+/***/ }),
+/* 426 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+'user strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = __webpack_require__(14);
+
+var _reactRouter = __webpack_require__(230);
+
+var _booksList = __webpack_require__(280);
+
+var _booksList2 = _interopRequireDefault(_booksList);
+
+var _cart = __webpack_require__(188);
+
+var _cart2 = _interopRequireDefault(_cart);
+
+var _booksForm = __webpack_require__(187);
+
+var _booksForm2 = _interopRequireDefault(_booksForm);
+
+var _main = __webpack_require__(421);
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var routes = _react2.default.createElement(
+  _reactRouter.Router,
+  { history: _reactRouter.browserHistory },
+  _react2.default.createElement(
+    _reactRouter.Route,
+    { path: '/', component: _main2.default },
+    _react2.default.createElement(_reactRouter.IndexRoute, { component: _booksList2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: '/admin', component: _booksForm2.default }),
+    _react2.default.createElement(_reactRouter.Route, { path: '/cart', component: _cart2.default })
+  )
+);
+
+exports.default = routes;
 
 /***/ })
 /******/ ]);
