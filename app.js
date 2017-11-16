@@ -5,11 +5,8 @@ require('babel-core/register')({
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
-var index = require('./routes/index');
-var users = require('./routes/users');
-
+// Proxy
 var httpProxy = require('http-proxy');
-
 // REQUEST HANDLER
 var requestHandler = require('./requestHandler.js')
 
