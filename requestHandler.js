@@ -27,6 +27,7 @@ function handleRender(req,res) {
         } else if (redirect) {
           res.status(302, redirect.pathname + redirect.search)
         } else if (props) {
+          // render component that matches the routes
           const reactComponent = renderToString(
             <Provider store={store}>
               <RouterContext {...props}/>
