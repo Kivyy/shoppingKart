@@ -9,6 +9,7 @@ import {match, RouterContext} from 'react-router';
 import reducers from './src/reducers/index';
 import routes from './src/routes';
 
+// function to handle http request
 function handleRender(req,res) {
   axios.get('http://localhost:3001/books')
     .then((response) => {
